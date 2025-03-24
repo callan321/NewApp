@@ -3,15 +3,13 @@ import path from "path";
 import DB from "./db";
 import { logger } from "./logger";
 
-export default async function resetAndMigrate() {
+export default function resetAndMigrate() {
   const db = DB.getInstance();
   const migrationsDir = path.resolve("src/migrations");
 
   // Drop all existing tables
   const existingTables: any[] = db
-    .prepare(
-      "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
-    )
+    .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
     .all();
 
   for (const { name } of existingTables) {
@@ -32,9 +30,7 @@ export default async function resetAndMigrate() {
     .sort();
 
   if (migrationFiles.length === 0) {
-    logger.warn(
-      "Migrations folder is empty. Add .sql files to run migrations.\n"
-    );
+    logger.warn("Migrations folder is empty. Add .sql files to run migrations.\n");
     db.close();
     process.exit(0);
   }
@@ -58,9 +54,7 @@ export default async function resetAndMigrate() {
 
   /* Log final table info */
   const tables = db
-    .prepare(
-      "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'"
-    )
+    .prepare("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
     .all();
 
   console.log("\nDatabase structure:");
@@ -72,9 +66,7 @@ export default async function resetAndMigrate() {
       .all()
       .map((col: any) => col.name)
       .join(", ");
-    const rowInfo = db
-      .prepare(`SELECT COUNT(*) as count FROM ${name}`)
-      .get() as any;
+    const rowInfo = db.prepare(`SELECT COUNT(*) as count FROM ${name}`).get() as any;
     const rowCount = rowInfo.count;
 
     console.log(`  - ${name}: ${columns} | ${rowCount} rows`);

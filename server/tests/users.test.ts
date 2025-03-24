@@ -2,60 +2,56 @@ import request from "supertest";
 import app from "../src/app";
 
 describe("User Routes", () => {
-  const testUser = {
-    user_name: "testuser",
-    email: "testuser@example.com",
-    password: "secure123",
-  };
+  let createdUserId: number;
 
-  let userId: number;
-
-  // Create a user; note that the response only returns a success message.
-  it("POST /api/users - create user", async () => {
-    const res = await request(app).post("/api/users").send(testUser);
-    expect(res.statusCode).toBe(201);
-    expect(res.body).toHaveProperty("message", "User created successfully");
-    // The created user id is not returned here.
-  });
-
-  // Fetch all users and extract the one we just created.
-  it("GET /api/users - fetch all users", async () => {
+  it("should return an empty array initially", async () => {
     const res = await request(app).get("/api/users");
-    expect(res.statusCode).toBe(200);
-    // Adjust based on your API response structure.
-    // If your GET route returns { data: [...] }:
-    expect(res.body).toHaveProperty("data");
-    const users = res.body.data;
-    // If it returns an array directly, simply use:
-    // const users = res.body;
-    expect(Array.isArray(users)).toBe(true);
-    expect(users.length).toBeGreaterThan(0);
-
-    // Find the user by email.
-    const createdUser = users.find(
-      (user: any) => user.email === testUser.email
-    );
-    expect(createdUser).toBeDefined();
-    userId = createdUser.id;
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe(true);
+    expect(Array.isArray(res.body.data)).toBe(true);
+    expect(res.body.data.length).toBe(0);
   });
 
-  it("GET /api/users/:id - fetch user by ID", async () => {
-    const res = await request(app).get(`/api/users/${userId}`);
-    expect(res.statusCode).toBe(200);
-    expect(res.body.data).toHaveProperty("id", userId);
-  });
-
-  it("POST /api/users/:id - update user", async () => {
+  it("should create a new user", async () => {
     const res = await request(app)
-      .post(`/api/users/${userId}`)
-      .send({ user_name: "updatedUser" });
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty("message");
+      .post("/api/users")
+      .send({ user_name: "testuser", email: "test@example.com", password: "secret" });
+    expect(res.status).toBe(201);
+    expect(res.body.status).toBe(true);
+
+    // Optionally fetch users again to confirm creation
+    const allUsers = await request(app).get("/api/users");
+    const createdUser = allUsers.body.data.find((u: any) => u.email === "test@example.com");
+    expect(createdUser).toBeDefined();
+    createdUserId = createdUser.id;
   });
 
-  it("DELETE /api/users/:id - delete user", async () => {
-    const res = await request(app).delete(`/api/users/${userId}`);
-    expect(res.statusCode).toBe(200);
-    expect(res.body).toHaveProperty("message");
+  it("should fetch the user by ID", async () => {
+    const res = await request(app).get(`/api/users/${createdUserId}`);
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe(true);
+    expect(res.body.data.id).toEqual(createdUserId);
+    expect(res.body.data.user_name).toBe("testuser");
+  });
+
+  it("should update the user's name", async () => {
+    const res = await request(app)
+      .post(`/api/users/${createdUserId}`)
+      .send({ user_name: "updatedUser" });
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe(true);
+
+    const updated = await request(app).get(`/api/users/${createdUserId}`);
+    expect(updated.body.data.user_name).toBe("updatedUser");
+  });
+
+  it("should delete the user", async () => {
+    const res = await request(app).delete(`/api/users/${createdUserId}`);
+    expect(res.status).toBe(200);
+    expect(res.body.status).toBe(true);
+
+    const check = await request(app).get(`/api/users/${createdUserId}`);
+    expect(check.status).toBe(404);
+    expect(check.body.status).toBe(false);
   });
 });

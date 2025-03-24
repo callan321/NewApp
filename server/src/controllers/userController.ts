@@ -21,9 +21,7 @@ export const createUser = async (req: Request, res: Response) => {
   const { user_name, email, password } = req.body;
   const success = await userService.createUser({ user_name, email, password });
   if (success) {
-    res
-      .status(201)
-      .json({ status: true, message: "User created successfully" });
+    res.status(201).json({ status: true, message: "User created successfully" });
   } else {
     res.status(400).json({ status: false, message: "User creation failed" });
   }
@@ -38,13 +36,9 @@ export const updateUser = async (req: Request, res: Response) => {
     password,
   });
   if (updated) {
-    res
-      .status(200)
-      .json({ status: true, message: "User updated successfully" });
+    res.status(200).json({ status: true, message: "User updated successfully" });
   } else {
-    res
-      .status(404)
-      .json({ status: false, message: "User not found or update failed" });
+    res.status(404).json({ status: false, message: "User not found or update failed" });
   }
 };
 
@@ -52,13 +46,9 @@ export const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   const deleted = await userService.deleteUser(Number(id));
   if (deleted) {
-    res
-      .status(200)
-      .json({ status: true, message: "User deleted successfully" });
+    res.status(200).json({ status: true, message: "User deleted successfully" });
   } else {
-    res
-      .status(404)
-      .json({ status: false, message: "User not found or deletion failed" });
+    res.status(404).json({ status: false, message: "User not found or deletion failed" });
   }
 };
 
