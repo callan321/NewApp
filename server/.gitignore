@@ -1,0 +1,19 @@
+# Node
+node_modules/
+dist/
+.env
+*.log
+npm-debug.log*
+
+# SQLite database files
+*.sqlite
+*.sqlite3
+*.db
+
+# TypeScript
+*.tsbuildinfo
+
+# OS / Editor junk
+.idea/
+.vscode/
+
