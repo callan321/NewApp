@@ -1,11 +1,11 @@
 import { Router } from "express";
-import { userController } from "./controllers/userController";
+import { loginUser, registerUser } from "./controllers/authController";
+import { loginLimiter, registerLimiter } from "./middleware/rateLimiters";
+import { registerSchema } from "./models/userModel";
+import { validateBody } from "./utils/validateBody";
 
 export const router = Router();
 
-// User routes
-router.get("/users", userController.getAllUsers);
-router.get("/users/:id", userController.getUserById);
-router.post("/users", userController.createUser);
-router.post("/users/:id", userController.updateUser);
-router.delete("/users/:id", userController.deleteUser);
+// Auth routes
+router.post('/register', registerLimiter, validateBody(registerSchema), registerUser);
+router.post('/login', loginLimiter, loginUser);

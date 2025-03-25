@@ -4,4 +4,8 @@ module.exports = {
   globalSetup: "./shared/resetAndMigrate.ts",
   moduleFileExtensions: ["ts", "js", "json"],
   testMatch: ["**/tests/**/*.test.ts"],
+
+  verbose: false,
+  silent: false,  
 };
+  

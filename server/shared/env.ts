@@ -19,7 +19,7 @@ function getEnv(
   }
 
   if (validate && !validate(value)) {
-    logger.error("0m Invalid value for", name, ":", value);
+    logger.error("Invalid value");
     throw new Error(`Invalid value for ${name}: "${value}"`);
   }
 

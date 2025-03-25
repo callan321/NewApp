@@ -14,7 +14,7 @@ export default function resetAndMigrate() {
 
   for (const { name } of existingTables) {
     db.prepare(`DROP TABLE IF EXISTS ${name}`).run();
-    console.log(`🗑 Dropped table: ${name}`);
+    console.log(`Dropped table: ${name}`);
   }
 
   /* Ensure migrations directory exists */
