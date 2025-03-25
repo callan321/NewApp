@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from "express";
 import { router } from "./routes";
+import cors from 'cors';
 
 const app = express();
 
@@ -11,6 +12,12 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   console.log(`${req.method} ${req.url}`);
   next();
 });
+
+// Allow requests from your frontend origin
+app.use(cors({
+  origin: 'http://localhost:4200',
+  credentials: true
+}));
 
 // 3. Health check / root route
 app.get("/", (req: Request, res: Response) => {
